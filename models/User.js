@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
 userSchema.pre("save", async function (next) {
   const user = this;
 
-  if(!user.isModified('password')) return next()
+  if (!user.isModified('password')) return next()
 
   try {
     const salt = await bcryptjs.genSalt(10)
@@ -32,5 +32,9 @@ userSchema.pre("save", async function (next) {
     throw new Error('Fallo el hash de contraseña')
   }
 })
+
+userSchema.methods.comparePassword = async function (candidatePassword) {
+  return await bcryptjs.compare(candidatePassword, this.password)
+}
 
 export const User = mongoose.model('User', userSchema)
