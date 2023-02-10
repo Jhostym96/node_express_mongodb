@@ -1,50 +1,23 @@
 import { Router } from 'express'
-import { infoUser, login, register } from '../controllers/auth.controllers.js';
-import { body } from 'express-validator';
-import { validationResultExpress } from '../middlewares/validationResultExpress.js';
+import {
+  infoUser,
+  login,
+  logout,
+  refreshToken, 
+  register, 
+} from '../controllers/auth.controllers.js';
+import { requireRefreshToken } from '../middlewares/requireRefreshToken.js';
 import { requireToken } from '../middlewares/requireToken.js';
-
-
+import { bodyLoginValidator, bodyRegisterValidator } from '../middlewares/validatorManager.js';
 
 const router = Router()
 
-router.post(
-  '/register',
-  [
-    body('email', "Formato de email incorrecto")
-      .trim()
-      .isEmail()
-      .normalizeEmail(),
-    body('password', "Minimo 6 caracteres")
-      .trim()
-      .isLength({ min: 6 }),
-    body('password', "Formato de password incorrecta")
-      .custom((value, { req }) => {
-        if (value !== req.body.repassword) {
-          throw new Error("No coninciden las contraseñas")
-        }
-        return value
-      })
-  ],
-  validationResultExpress,
-  register
-);
+router.post('/register',bodyRegisterValidator,register);
+router.post('/login',bodyLoginValidator,login);
 
-router.post(
-  '/login',
-  [
-    body('email', "Formato de email incorrecto")
-      .trim()
-      .isEmail()
-      .normalizeEmail(),
-    body('password', "Minimo 6 caracteres")
-      .trim()
-      .isLength({ min: 6 }),
-  ],
-  validationResultExpress,
-  login
-);
+router.get('/protected', requireToken, infoUser);
+router.get('/refresh', requireRefreshToken, refreshToken);
+router.get('/logout', logout)
 
-router.get('/protected', requireToken, infoUser)
 
 export default router;

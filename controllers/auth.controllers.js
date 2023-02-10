@@ -1,21 +1,24 @@
 import { User } from "../models/User.js"
-import jwt from 'jsonwebtoken'
-import { generateToken } from "../utils/tokenManager.js";
+import { generateRefreshToken, generateToken } from "../utils/tokenManager.js";
 
 export const register = async (req, res) => {
   const { email, password } = req.body
   try {
     //alternativa buscando por email
-    let user = await User.findOne({ email })
-    if (user) throw ({ code: 11000 })
+    let user = await User.findOne({ email });
+    if (user) throw ({ code: 11000 });
 
     user = new User({ email, password })
 
     await user.save()
 
     // Generar el token JWT
+    const {token, expiresIn} = generateToken(user.id);
+    generateRefreshToken(user.id, res);
 
-    return res.json({ ok: 'Register' })
+
+
+    return res.status(201).json({ token, expiresIn })
   } catch (error) {
     if (error) {
       if (error.code === 11000) {
@@ -30,7 +33,8 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     let user = await User.findOne({ email });
-    if (!user) return res.status(403).json({ error: 'No existe este usuario' });
+    if (!user)
+      return res.status(403).json({ error: 'No existe este usuario' });
 
     const respuestaPassword = await user.comparePassword(password)
     if (!respuestaPassword)
@@ -39,6 +43,7 @@ export const login = async (req, res) => {
     // Generar el token JWT
 
     const { token, expiresIn } = generateToken(user.id)
+    generateRefreshToken(user.id, res);
 
 
     return res.json({ token, expiresIn });
@@ -56,4 +61,20 @@ export const infoUser = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: "Error de servidor" })
   }
-}
+};
+
+export const refreshToken = (req, res) => {
+
+  try {
+    const { token, expiresIn } = generateToken(req.uid);
+    return res.json({ token, expiresIn });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "error de servidor" });
+  }
+};
+
+export const logout = (req, res) => {
+  res.clearCookie('refreshToken')
+  res.json({ ok: true });
+};
