@@ -12,6 +12,27 @@ export const getLinks = async (req, res) => {
   }
 };
 
+export const getLink = async (req, res) => {
+  try {
+    const {id} = req.params
+    const link = await Link.findById(id)
+
+    if(link.exi)
+
+    console.log(link())
+
+    return res.json({ link });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: 'error de servidor' })
+  }
+
+}
+
+
+
+
+
 export const createLink = async (req, res) => {
   try {
     let { longLink } = req.body;
