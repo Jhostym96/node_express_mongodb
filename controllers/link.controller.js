@@ -1,6 +1,8 @@
 import { nanoid } from "nanoid";
 import { Link } from "../models/Link.js";
 
+// Traer todos los Links
+
 export const getLinks = async (req, res) => {
   try {
     const links = await Link.find({ uid: req.uid })
@@ -12,26 +14,28 @@ export const getLinks = async (req, res) => {
   }
 };
 
+// Traer un solo link por id
+
 export const getLink = async (req, res) => {
   try {
-    const {id} = req.params
+    const { id } = req.params
     const link = await Link.findById(id)
 
-    if(link.exi)
+    if (!link) return res.status(404).json({ error: 'No existe el link' })
 
-    console.log(link())
+    if (!link.uid.equals(req.uid)) return res.status(401).json({ error: 'No le pertenece ese id 🤡' })
 
     return res.json({ link });
   } catch (error) {
     console.log(error);
+    if (error.kind === "ObjectId") {
+      return res.status(403).json({ error: 'Formato id incorrecto' })
+    }
     return res.status(500).json({ error: 'error de servidor' })
   }
+};
 
-}
-
-
-
-
+// Crear un nuevo link
 
 export const createLink = async (req, res) => {
   try {
@@ -48,4 +52,61 @@ export const createLink = async (req, res) => {
     console.log(error);
     return res.status(500).json({ error: 'error de servidor' })
   }
-}
+};
+
+// Eliminar un link
+
+export const removeLink = async (req, res) => {
+  try {
+    const { id } = req.params
+    const link = await Link.findById(id)
+
+    if (!link) return res.status(404).json({ error: 'No existe el link' })
+
+    if (!link.uid.equals(req.uid)) return res.status(401).json({ error: 'No le pertenece ese id 🤡' })
+
+    await link.remove()
+
+    return res.json({ link });
+  } catch (error) {
+    console.log(error);
+    if (error.kind === "ObjectId") {
+      return res.status(403).json({ error: 'Formato id incorrecto' })
+    }
+    return res.status(500).json({ error: 'error de servidor' })
+  }
+};
+
+// Actualizar un link
+
+export const updateLink = async (req, res) => {
+  try {
+    const { id } = req.params
+    const { longLink } = req.body
+
+    console.log(longLink);
+
+    if (!longLink.startsWith('https://')) {
+      longLink = 'https://' + longLink;
+    }
+
+    const link = await Link.findById(id)
+
+    if (!link) return res.status(404).json({ error: 'No existe el link' })
+
+    if (!link.uid.equals(req.uid)) return res.status(401).json({ error: 'No le pertenece ese id 🤡' })
+
+    // Actualizar
+    link.longLink = longLink
+    await link.save()
+
+
+    return res.json({ link });
+  } catch (error) {
+    console.log(error);
+    if (error.kind === "ObjectId") {
+      return res.status(403).json({ error: 'Formato id incorrecto' })
+    }
+    return res.status(500).json({ error: 'error de servidor' })
+  }
+};
