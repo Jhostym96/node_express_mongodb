@@ -9,16 +9,16 @@ import authRouter from './routes/auth.route.js';
 
 const app = express();
 
-const whiteList = [process.env.ORIGIN1]
+const whiteList = [process.env.ORIGIN1, process.env.ORIGIN2]
 
 // configurando cors
 app.use(
     cors({
     origin: function (origin, callback) {
-        if (whiteList.includes(origin)) {
+        if (!origin || whiteList.includes(origin)) {
             return callback(null, origin)
         }
-        return callback("Error de CORS origin :" + origin + "No autorizado!")
+        return callback("Error de CORS origin : " + origin + " No autorizado!")
     }
 }));
 
