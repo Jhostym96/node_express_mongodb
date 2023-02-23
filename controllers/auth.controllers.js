@@ -1,29 +1,29 @@
-import { User } from "../models/User.js"
+import { User } from "../models/User.js";
 import { generateRefreshToken, generateToken } from "../utils/tokenManager.js";
 
 export const register = async (req, res) => {
-  const { email, password } = req.body
+  const { userName, email, password } = req.body;
   try {
     //alternativa buscando por email
     let user = await User.findOne({ email });
-    if (user) throw ({ code: 11000 });
+    if (user) throw { code: 11000 };
 
-    user = new User({ email, password })
+    user = new User({userName ,email, password });
 
-    await user.save()
+    await user.save();
 
     // Generar el token JWT
-    const {token, expiresIn} = generateToken(user.id);
+    const { token, expiresIn } = generateToken(user.id);
     generateRefreshToken(user.id, res);
 
-    return res.status(201).json({ token, expiresIn })
+    return res.status(201).json({ token, expiresIn });
   } catch (error) {
     if (error) {
       if (error.code === 11000) {
-        return res.status(400).json({ error: 'Ya existe este usuario' })
+        return res.status(400).json({ error: "Ya existe este usuario" });
       }
-      return res.status(500).json({ error: "Error de servidor" })
-    };
+      return res.status(500).json({ error: "Error de servidor" });
+    }
   }
 };
 
@@ -31,38 +31,34 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     let user = await User.findOne({ email });
-    if (!user)
-      return res.status(403).json({ error: 'No existe este usuario' });
+    if (!user) return res.status(403).json({ error: "No existe este usuario" });
 
-    const respuestaPassword = await user.comparePassword(password)
+    const respuestaPassword = await user.comparePassword(password);
     if (!respuestaPassword)
-      return res.status(403).json({ error: "Contraseña incorrecta" })
+      return res.status(403).json({ error: "Contraseña incorrecta" });
 
     // Generar el token JWT
 
-    const { token, expiresIn } = generateToken(user.id)
+    const { token, expiresIn } = generateToken(user.id);
     generateRefreshToken(user.id, res);
-
 
     return res.json({ token, expiresIn });
   } catch (error) {
-    console.log(error)
-    return res.status(500).json({ error: 'Error de servidor' })
-
+    console.log(error);
+    return res.status(500).json({ error: "Error de servidor" });
   }
 };
 
 export const infoUser = async (req, res) => {
   try {
-    const user = await User.findById(req.uid).lean()
-    return res.json({ email: user.email, uid: user.id })
+    const user = await User.findById(req.uid).lean();
+    return res.json({ userName: user.userName, email: user.email, uid: user.id });
   } catch (error) {
-    return res.status(500).json({ error: "Error de servidor" })
+    return res.status(500).json({ error: "Error de servidor" });
   }
 };
 
 export const refreshToken = (req, res) => {
-
   try {
     const { token, expiresIn } = generateToken(req.uid);
     return res.json({ token, expiresIn });
@@ -73,6 +69,6 @@ export const refreshToken = (req, res) => {
 };
 
 export const logout = (req, res) => {
-  res.clearCookie('refreshToken')
+  res.clearCookie("refreshToken");
   res.json({ ok: true });
 };

@@ -28,6 +28,9 @@ validationResultExpress
 ]
 
 export const bodyRegisterValidator = [
+  body('userName', "Error formato usuario")
+  .trim()
+  .isLength({ min: 1 }),
   body('email', "Formato de email incorrecto")
     .trim()
     .isEmail()
