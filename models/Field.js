@@ -25,7 +25,7 @@ const fieldSchema = new Schema({
   },
   uid: {
     type: Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'User',  // Revisar
     required: true,
   }
 });

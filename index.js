@@ -6,7 +6,9 @@ import cors from "cors";
 
 import linkRouter from "./routes/link.route.js";
 import authRouter from "./routes/auth.route.js";
-import fieldRouter from "./routes/field.route.js"
+import fieldRouter from "./routes/field.route.js";
+import reserRouter from "./routes/reserva.route.js";
+
 
 const app = express();
 
@@ -34,10 +36,12 @@ app.use(cookieParser());
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/links", linkRouter);
 app.use("/api/v1/fields", fieldRouter);
+app.use('/api/v1/reservas', reserRouter);
+
 
 
 // Ejemplo de login y token
-// app.use(express.static('public'))
+app.use(express.static('public'))
 
 const PORT = process.env.PORT || 5000;
 

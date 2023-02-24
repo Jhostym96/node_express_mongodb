@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { createField, getField, getFields, removeField, updateField} from "../controllers/field.controllers.js";
 import { requireToken } from "../middlewares/requireToken.js";
-import { bodyLinkValidator} from "../middlewares/validatorManager.js";
 
 const router = Router();
 
