@@ -17,22 +17,18 @@ const schemaReserva = new Schema({
     }],
 
     fecha_reserva:{
-        type: String,
-        required: false
+        type: Date,
+        required: true
     },
 
     hora_inicio:{
-        type: mongoose.Schema.Types.String,
-        validate: {
-            validator: (valor) => {
-                return /([0-2][0-2]:[0-2][0-2])/.test(valor)
-
-            },
-            message: "El formato debe ser desde 00:00 hasta 23:59",
-        },
+        type: Date,
+        required: true
     },
-
-    hora_fin: mongoose.Schema.Types.String,
+    hora_fin:{
+        type: Date,
+        required: true
+    },
 
     disponibilidad:{
         type: Boolean,
