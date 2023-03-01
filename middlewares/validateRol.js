@@ -5,11 +5,8 @@ export function isAdmin(req, res, next) {
   if (!authHeader) {
     return res.status(401).send("Token no proporcionado");
   }
-  const token = authHeader.slice(7);
 
-  const decoded = jwt.decode(token);
-
-  const role = decoded.role;
+  const role = jwt.decode(authHeader.slice(7)).role;
 
   if (role === "admin") {
     next();
