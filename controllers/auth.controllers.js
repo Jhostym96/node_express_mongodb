@@ -19,7 +19,7 @@ export const register = async (req, res) => {
     await user.save();
 
     // Generar el token JWT
-    const { token, expiresIn } = generateToken(user.id);
+    const { token, expiresIn} = generateToken(user.id, user.role);
     generateRefreshToken(user.id, res);
 
     return res.status(201).json({ email, token, expiresIn });
