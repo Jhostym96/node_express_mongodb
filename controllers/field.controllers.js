@@ -36,7 +36,22 @@ export const getField = async (req, res) => {
 
 export const createField = async (req, res) => {
   try {
-    let { nameField, adress, capacity, priceForHour } = req.body;
+    let {
+      nameField,
+      adress,
+      capacity,
+      priceForHour,
+      img,
+      img1,
+      img2,
+      img3,
+      img4,
+      img5,
+      img6,
+      img7,
+      img8,
+      img9,
+    } = req.body;
 
     const field = new Field({
       nameField,
@@ -44,6 +59,16 @@ export const createField = async (req, res) => {
       capacity,
       priceForHour,
       uid: req.uid,
+      img,
+      img1,
+      img2,
+      img3,
+      img4,
+      img5,
+      img6,
+      img7,
+      img8,
+      img9,
     });
 
     const newField = await field.save();
@@ -81,7 +106,22 @@ export const removeField = async (req, res) => {
 export const updateField = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nameField, adress, capacity, priceForHour } = req.body;
+    const {
+      nameField,
+      adress,
+      capacity,
+      priceForHour,
+      img,
+      img1,
+      img2,
+      img3,
+      img4,
+      img5,
+      img6,
+      img7,
+      img8,
+      img9,
+    } = req.body;
 
     const field = await Field.findById(id);
 
@@ -92,6 +132,16 @@ export const updateField = async (req, res) => {
     field.adress = adress;
     field.capacity = capacity;
     field.priceForHour = priceForHour;
+    field.img = img;
+    field.img1 = img1;
+    field.img2 = img2;
+    field.img3 = img3;
+    field.img4 = img4;
+    field.img5 = img5;
+    field.img6 = img6;
+    field.img7 = img7;
+    field.img8 = img8;
+    field.img9 = img9;
 
     await field.save();
 

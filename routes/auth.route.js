@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import {
+  getUser,
   infoUser,
   login,
   logout,
@@ -14,6 +15,10 @@ const router = Router()
 
 router.post('/register',bodyRegisterValidator,register);
 router.post('/login',bodyLoginValidator,login);
+
+
+router.get('/user/:id',requireToken,getUser);
+
 
 router.get('/protected', requireToken, infoUser);
 router.get('/refresh', requireRefreshToken, refreshToken);
